@@ -558,13 +558,21 @@ $('body').on("click", ".product-single__btn-qty-adjust", function() {
 
 
 setTimeout(function() { 
-// Disable Add Promo Button
-var isDiscountAdded = sessionStorage.getItem('discountAdded');
-if(isDiscountAdded == "true") {
-	document.getElementsByName("properties[PROMO CODE]")[0].disabled = true;
-  	document.getElementById("errorLog").innerHTML = "Please remove existing promo code from cart before entering a new one.";
-}
-document.getElementById("PromoAddToCart").disabled = true;
+  var cart = {{cart | json}};
+  // Disable Add Promo Button
+  //let isDiscountAdded = sessionStorage.getItem('discountAdded');
+  let isDiscountAdded = "false";
+    $.each(cart.items, function( index, a ) {
+  console.log("inside loop", a.name);
+      if(a.name == "Discount") {
+      	isDiscountAdded = "true";
+      }
+    });
+  if(isDiscountAdded == "true") {
+      document.getElementsByName("properties[PROMO CODE]")[0].disabled = true;
+      document.getElementById("errorLog").innerHTML = "Please remove existing promo code from cart before entering a new one.";
+  }
+  document.getElementById("PromoAddToCart").disabled = true;
 
 // Detect Promo Code Input Text Change
 var promoInput = document.getElementsByName("properties[PROMO CODE]")[0];
@@ -572,7 +580,6 @@ var promoInput = document.getElementsByName("properties[PROMO CODE]")[0];
 $('input[name="properties[PROMO CODE]"]').on("keyup", function() {
   var pcEntered = promoInput.value;
   let validCode = false;
-  let cart = {{cart | json}};
   let dt = "";
   let da = 0;
   let dp = 0;
@@ -619,7 +626,7 @@ $('input[name="properties[PROMO CODE]"]').on("keyup", function() {
     document.getElementById("PromoAddToCart").disabled = true;
   }
 });
-}, 3500);
+}, 2500);
 
 $( "#AddToCart" ).on("click", function(e) {
     // For Discounts
